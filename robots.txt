@@ -1,0 +1,4 @@
+User-agent: * 
+Disallow: /admin/ 
+Sitemap: https://thisStorageIsMine.github.io/kurs/sitemap 
+Clean-param: ref /some_dir/get_book.pl

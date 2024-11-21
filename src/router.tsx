@@ -15,7 +15,7 @@ const router = createBrowserRouter([
         element: <h1>user <Outlet></Outlet> </h1>,
         children: [
             {
-                path: '/:noteName',
+                path: '/:userName/:noteName',
                 element: <h2>Note</h2>
             }
         ]
