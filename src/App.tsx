@@ -12,8 +12,7 @@ function App() {
   return (
     <NotificationsProvider>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router}>
-        </RouterProvider>
+        <RouterProvider router={router} />
       </QueryClientProvider>
     </NotificationsProvider>
 

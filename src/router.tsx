@@ -11,15 +11,11 @@ const router = createBrowserRouter([
         element: <SignUp />
     },
     {
-        path: "/:userName",
-        element: <h1>user <Outlet></Outlet> </h1>,
-        children: [
-            {
-                path: '/:userName/:noteName',
-                element: <h2>Note</h2>
-            }
-        ]
+        path: "notes/:userName/:noteName",
+        element: <h1>user <Outlet></Outlet> </h1>
     }
-])
+], {
+    basename: '/kurs/'
+})
 
 export { router }
