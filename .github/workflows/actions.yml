@@ -35,6 +35,8 @@ jobs:
         run: yarn install --frozen-lockfile
       - name: Build
         run: yarn build
+      - name: Copy static
+        run: cp index.html 404.html
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifacts
