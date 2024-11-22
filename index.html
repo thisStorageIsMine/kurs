@@ -6,10 +6,32 @@
   <link rel="icon" type="image/svg+xml" href="/notebook.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Заметочная</title>
+  <meta name="yandex-verification" content="ed1246f6be89ea27" />
 </head>
 
 <body>
-  <div id="root" data-test-id="hash"></div>
+
+  <!-- Yandex.Metrika counter -->
+  <script type="text/javascript">
+    (function (m, e, t, r, i, k, a) {
+      m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments) };
+      m[i].l = 1 * new Date();
+      for (var j = 0; j < document.scripts.length; j++) { if (document.scripts[j].src === r) { return; } }
+      k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
+    })
+      (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+    ym(99017848, "init", {
+      clickmap: true,
+      trackLinks: true,
+      accurateTrackBounce: true
+    });
+  </script>
+  <noscript>
+    <div><img src="https://mc.yandex.ru/watch/99017848" style="position:absolute; left:-9999px;" alt="" /></div>
+  </noscript>
+  <!-- /Yandex.Metrika counter -->
+  <div id="root" data-test-id="hash/"></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>
 

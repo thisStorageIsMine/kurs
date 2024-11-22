@@ -1,6 +1,10 @@
 {
     "rewrites": [
         {
+            "source": "/yandex_ed1246f6be89ea27.html",
+            "destination": "/yandex_ed1246f6be89ea27.html"
+        },
+        {
             "source": "/(.*)",
             "destination": "/"
         }
