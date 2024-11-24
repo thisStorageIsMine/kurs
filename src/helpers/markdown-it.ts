@@ -1,11 +1,23 @@
-import markdownit from "markdown-it"
+import markdownIt from "markdown-it"
+
+export type TMdInit = ConstructorParameters<typeof markdownIt>
+export type TMdOptions = TMdInit[0]
+
+
+
 
 export class MarkdownService {
-    private md = new markdownit()
+    private md: markdownIt
 
-    render(text: string) {
-        return this.md.render(text)
+    constructor(options: TMdOptions) {
+        this.md = new markdownIt(options)
+    }
+
+    render(str: string) {
+        return this.md.render(str)
     }
 }
 
-export const md = new MarkdownService()
+export const md = new MarkdownService({
+    "html": false,
+})

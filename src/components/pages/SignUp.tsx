@@ -98,7 +98,7 @@ const SignUp = () => {
                 </FetchButton>
 
                 <p className=" mt-2">
-                    Уже есть аккаунт? <Link to="/login">Войдите</Link>
+                    Уже есть аккаунт? <Link to="/">Войдите</Link>
                 </p>
 
             </form>

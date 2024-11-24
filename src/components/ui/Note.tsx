@@ -1,5 +1,6 @@
 import { ChangeEventHandler, useState } from 'react'
 import { MarkdownService } from '../../helpers';
+import { EditableText } from './EditableText';
 
 export interface NoteProps {
     name: string;
@@ -14,7 +15,11 @@ export const Note = ({ name, payload, md }: NoteProps) => {
 
     return (
         <div className="w-full h-full bg-white text-black text-sm" contentEditable={true} onChange={handleChange}>
-            {renderedText}
+
+            <EditableText text={name} as="h3" />
+
+            <div dangerouslySetInnerHTML={{ "__html": renderedText }}>
+            </div>
         </div>
     )
 }

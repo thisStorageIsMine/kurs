@@ -1,12 +1,22 @@
-import { createBrowserRouter, Outlet } from "react-router-dom";
-import { Login, SignUp } from "./components/pages";
+import { createBrowserRouter, } from "react-router-dom";
+import { Login, Notes, SignUp } from "./components/pages";
+import { Note } from "./components";
+import { md } from "./helpers";
 
+const text = `
+# Title
 
+---
+
+* Tag  
+* Bobr  
+
+`
 
 const router = createBrowserRouter([
     {
         path: "/:users",
-        element: <h1>user <Outlet></Outlet> </h1>,
+        element: <Notes />,
         children: [
             {
                 index: true,
@@ -14,12 +24,12 @@ const router = createBrowserRouter([
             },
             {
                 path: ':note',
-                element: <h2>Заметка</h2>
+                element: <Note name="Как создавать заметки" payload={text} md={md} />
             }
         ]
     },
     {
-        path: '/login',
+        path: '/',
         element: <Login />,
     },
     {

@@ -14,7 +14,7 @@ const Protected = ({ children }: IProtectedProps) => {
     const isAuth = useUser(state => state.isAuth)
 
     if (!isAuth) {
-        navigate('/login', { state: { origin } })
+        navigate('/', { state: { origin } })
     }
 
     return <>{children}</>
