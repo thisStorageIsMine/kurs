@@ -1,3 +1,8 @@
 
 
-export const Notes = () => {}
+export const Notes = () => {
+
+    return (
+        <main></main>
+    )
+}
