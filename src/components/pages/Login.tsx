@@ -36,7 +36,11 @@ const Login = () => {
 
         setAuth(true)
         setUser(data[0].login, data[0].id)
+
+        // @ts-expect-error: Cannot find name
+        _tmr.push({ type: 'reachGoal', id: 3582359, goal: 'login' });
         navigate(origin)
+
     }
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>, dispatch: Dispatch<SetStateAction<string>>) => {
