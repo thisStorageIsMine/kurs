@@ -1,23 +1,21 @@
-import { useLocation, useNavigate } from "react-router-dom"
-import { useUser } from "../store"
-import { ReactNode } from "react"
+import { Navigate, useLocation } from 'react-router-dom'
+import { useUser } from '../store'
+import { ReactNode } from 'react'
 
 export interface IProtectedProps {
-    children: ReactNode
+  children: ReactNode
 }
 
 const Protected = ({ children }: IProtectedProps) => {
-    const navigate = useNavigate()
-    const location = useLocation(),
-        origin = location.pathname
+  const location = useLocation(),
+    origin = location.pathname
+  const isAuth = useUser((state) => state.isAuth)
 
-    const isAuth = useUser(state => state.isAuth)
+  if (!isAuth) {
+    return <Navigate to="/" state={{ origin }} />
+  }
 
-    if (!isAuth) {
-        navigate('/', { state: { origin } })
-    }
-
-    return <>{children}</>
+  return <>{children}</>
 }
 
 export { Protected }

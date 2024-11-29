@@ -1,35 +1,68 @@
-import { useState, createElement, ChangeEvent, useCallback, ChangeEventHandler, } from "react"
+import {
+  useState,
+  createElement,
+  ChangeEvent,
+  useCallback,
+  ChangeEventHandler,
+} from 'react'
 import cn from 'classnames'
 
 export interface EditableTextProps {
-    text: string
-    as: string
-    className?: string
-    editorClassName?: string
-    onChange?: (text: string, e: ChangeEvent<HTMLTextAreaElement>) => void
+  text: string
+  as: string
+  className?: string
+  editorClassName?: string
+  onChange?: (text: string, e: ChangeEvent<HTMLTextAreaElement>) => void
 }
-export const EditableText = ({ text, as, className, editorClassName, onChange }: EditableTextProps) => {
-    const [isEditing, setIsEditing] = useState(false)
+export const EditableText = ({
+  text,
+  as,
+  className,
+  editorClassName,
+  onChange,
+}: EditableTextProps) => {
+  const [isEditing, setIsEditing] = useState(false)
 
-    const handleChange: ChangeEventHandler<HTMLTextAreaElement> = useCallback((e) => {
-        if (!onChange) return
+  const elem = createElement(as, {
+    className: className,
+    children: text,
+    onDoubleClick: () => setIsEditing(true),
+  })
 
-        onChange(e.target.value, e)
-    }, [])
+  const handleChange: ChangeEventHandler<HTMLTextAreaElement> = useCallback((e) => {
+    if (!onChange) return
 
-    if (!isEditing) {
-        return createElement(as, { "className": className, "children": text, "onDoubleClick": () => setIsEditing(true) })
+    onChange(e.target.value, e)
+  }, [])
+
+  const setEditorRef = (node: HTMLTextAreaElement | null) => {
+    if (node && isEditing) {
+      node.focus()
     }
+  }
 
-    const setEditorRef = (node: HTMLTextAreaElement | null) => {
-        if (node && isEditing) {
-            node.focus()
-        }
-    }
+  return (
+    <span
+      className={cn(
+        'flex hover:outline-slate-700  p-2 rounded text-inherit cursor-text',
+        isEditing ? 'w-full' : 'w-fit',
+        editorClassName
+      )}
+    >
+      <textarea
+        className={cn(
+          'font-medium w-full outline-none focus:outline-none resize-none bg-inherit',
+          isEditing ? 'block' : 'hidden'
+        )}
+        onChange={handleChange}
+        rows={1}
+        onBlur={() => setIsEditing(false)}
+        ref={setEditorRef}
+      >
+        {text}
+      </textarea>
 
-    return (
-        <div className={cn("", editorClassName)}>
-            <textarea className={cn("w-full h-full bg-white text-black font-medium")} onChange={handleChange} onBlur={() => setIsEditing(false)} ref={setEditorRef}>{text}</textarea>
-        </div>
-    )
+      {isEditing ? <></> : elem}
+    </span>
+  )
 }

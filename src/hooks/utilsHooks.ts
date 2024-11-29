@@ -1,21 +1,20 @@
-import { useEffect, useRef } from "react"
-
+import { useEffect, useRef } from 'react'
 
 const useTitle = (title: string) => {
-    useEffect(() => {
-        document.title = title
-    }, [])
+  useEffect(() => {
+    document.title = title
+  }, [])
 }
-const useDebounce = (fn: (...args: any[]) => void, ms: number) => {
-    let timeoutId = useRef<NodeJS.Timeout | undefined>(undefined);
+const useDebounce = (fn: (...args: unknown[]) => void, ms: number) => {
+  const timeoutId = useRef<NodeJS.Timeout | undefined>(undefined)
 
-    return (...args: any[]) => {
-        clearTimeout(timeoutId.current);
+  return (...args: unknown[]) => {
+    clearTimeout(timeoutId.current)
 
-        timeoutId.current = setTimeout(() => {
-            fn(...args);
-        }, ms);
-    };
-};
+    timeoutId.current = setTimeout(() => {
+      fn(...args)
+    }, ms)
+  }
+}
 
 export { useTitle, useDebounce }
