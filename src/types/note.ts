@@ -1,5 +1,7 @@
 export type TNote = {
-    name: string;
-    text: string;
-    createdAt: number;
+  id: number
+  name: string
+  payload: string
+  slug: string
+  createdAt: number | string
 }

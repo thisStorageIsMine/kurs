@@ -67,7 +67,18 @@ button:disabled {
   border-color: #1a1a1a;
 }
 
-
 input[type='password']:focus::-ms-reveal {
   filter: invert(100%);
+}
+
+::-webkit-scrollbar {
+  @apply w-2;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-[#555] rounded-md;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
 }
