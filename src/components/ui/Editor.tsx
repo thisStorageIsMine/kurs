@@ -18,8 +18,10 @@ export interface NoteProps {
   name: string
   payload: string
   className?: string
+  onEdit?: (payload: string) => void
+  onHeaderEdit?: (name: string) => void
 }
-export const Editor = ({ name, payload, className }: NoteProps) => {
+export const Editor = ({ name, payload, className, onEdit, onHeaderEdit }: NoteProps) => {
   return (
     <div className={cn('w-full h-full text-sm', className)}>
       <div className="py-2 px-3">
@@ -28,6 +30,7 @@ export const Editor = ({ name, payload, className }: NoteProps) => {
           as="h3"
           editorClassName="bg-transparent outline-none resize-none h-auto"
           className="h-auto"
+          onChange={onHeaderEdit}
         />
       </div>
 
@@ -52,6 +55,7 @@ export const Editor = ({ name, payload, className }: NoteProps) => {
           //     toolbarClassName: "flex flex-row h-10"
           // })
         ]}
+        onChange={onEdit}
         key={payload}
       />
     </div>

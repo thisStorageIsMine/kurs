@@ -13,14 +13,15 @@ import {
 } from 'react'
 import { supabase } from '../../supabase'
 import { useErrorNotification } from '../ui/Notifications/hooks'
-import { useAuthRedirect, useCheckLogin } from '../../hooks/'
+import { useCheckLogin, useNavigateFromSlug } from '../../hooks/'
 import { useUser } from '../../store'
 
 import { useShallow } from 'zustand/react/shallow'
 
 const SignUp = () => {
-  useAuthRedirect()
   useTitle('Создать аккаунт')
+
+  const navigateFromSlug = useNavigateFromSlug()
 
   const [login, setLogin] = useState('')
   const [defferedLogin, serDefferedLogin] = useState(login)
@@ -49,7 +50,8 @@ const SignUp = () => {
     onQueryStart,
     onQuerySettled
   )
-  const setDebouncedLogin = useDebounce((login: string) => {
+  const setDebouncedLogin = useDebounce((login) => {
+    if (typeof login !== 'string') return
     serDefferedLogin(login)
   }, 1000)
 
@@ -60,10 +62,18 @@ const SignUp = () => {
     async (e) => {
       e.preventDefault()
 
-      const { data, error } = await supabase
-        .from('users')
-        .insert({ login, password })
-        .select('*')
+      const { data, error } = await supabase.from('users').insert({ login, password })
+        .select(`
+            id,
+            login,
+            notes (
+              id,
+              name,
+              payload,
+              created_at,
+              slug
+            )
+          `)
 
       if (!data || error) {
         createErrorNotification(
@@ -73,8 +83,14 @@ const SignUp = () => {
         return
       }
 
+      const userId = data[0].id
+
+      const availableSlugs: string[] = data[0].notes.map((note) => note.slug)
+
       setAuth(true)
-      setUser(data[0].login, data[0].id)
+      setUser(data[0].login, userId)
+
+      navigateFromSlug(userId, availableSlugs)
     },
     [login, password]
   )

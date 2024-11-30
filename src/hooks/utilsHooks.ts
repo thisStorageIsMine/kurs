@@ -5,14 +5,14 @@ const useTitle = (title: string) => {
     document.title = title
   }, [])
 }
-const useDebounce = (fn: (...args: unknown[]) => void, ms: number) => {
+const useDebounce = <T>(fn: (arg: T) => unknown | Promise<unknown>, ms: number) => {
   const timeoutId = useRef<NodeJS.Timeout | undefined>(undefined)
 
-  return (...args: unknown[]) => {
+  return (arg: T) => {
     clearTimeout(timeoutId.current)
 
     timeoutId.current = setTimeout(() => {
-      fn(...args)
+      fn(arg)
     }, ms)
   }
 }

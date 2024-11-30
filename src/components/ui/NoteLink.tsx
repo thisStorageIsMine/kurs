@@ -6,7 +6,7 @@ export interface INoteProps extends TNote {
   href: string
   className?: string
 }
-export const NoteLink = ({ name, text, createdAt, href, className }: INoteProps) => {
+export const NoteLink = ({ name, payload, createdAt, href, className }: INoteProps) => {
   const date = new Date(createdAt).toLocaleDateString('ru-RU')
   return (
     <NavLink
@@ -23,7 +23,7 @@ export const NoteLink = ({ name, text, createdAt, href, className }: INoteProps)
 
       <div className="max-w-full truncate flex gap-2 text-xs text-slate-300">
         <div>{date}</div>
-        <div>{text}</div>
+        <div>{payload}</div>
       </div>
     </NavLink>
   )
