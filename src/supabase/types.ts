@@ -44,7 +44,6 @@ export type Database = {
           id: number
           name: string
           payload: string
-          slug: string
           user_id: number
         }
         Insert: {
@@ -52,7 +51,6 @@ export type Database = {
           id?: number
           name: string
           payload: string
-          slug: string
           user_id: number
         }
         Update: {
@@ -60,7 +58,6 @@ export type Database = {
           id?: number
           name?: string
           payload?: string
-          slug?: string
           user_id?: number
         }
         Relationships: [

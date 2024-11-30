@@ -4,17 +4,18 @@ import { useHandleNoteEdit, useNotesQueryOptions } from '../../hooks'
 import { queryClient } from '../../App'
 
 export const Note = () => {
-    const { note: noteSlug } = useParams()
+    const { noteId: stringNoteId } = useParams()
+    const noteId = Number(stringNoteId)
     const notesQueryOptions = useNotesQueryOptions()
 
     const note = queryClient
         .getQueryData(notesQueryOptions().queryKey)
-        ?.find((n) => n.slug === noteSlug)
+        ?.find((n) => n.id === (noteId || -1))
 
     const { handleEdit, mutation } = useHandleNoteEdit(note?.id)
 
     if (!note) {
-        throw new Error(`There is no "${noteSlug}" notes`)
+        throw new Error(`There is no ${note} note`)
     }
 
     const optimisticHeader = mutation.variables?.name || note.name
@@ -35,7 +36,7 @@ export const Note = () => {
     }
 
     return (
-        <div className="w-full h-full border-l border-slate-300">
+        <div className="w-full h-full ">
             <Editor
                 payload={optimisticPayload}
                 name={optimisticHeader}

@@ -2,188 +2,195 @@ import { Link } from 'react-router-dom'
 import { FetchButton, Input } from '../ui'
 import { useDebounce, useTitle } from '../../hooks/utilsHooks'
 import {
-  ChangeEvent,
-  Dispatch,
-  FormEventHandler,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
+    ChangeEvent,
+    Dispatch,
+    FormEventHandler,
+    SetStateAction,
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
 } from 'react'
 import { supabase } from '../../supabase'
 import { useErrorNotification } from '../ui/Notifications/hooks'
-import { useCheckLogin, useNavigateFromSlug } from '../../hooks/'
+import { useCheckLogin, useNavigateToNotes } from '../../hooks/'
 import { useUser } from '../../store'
 
 import { useShallow } from 'zustand/react/shallow'
 
 const SignUp = () => {
-  useTitle('Создать аккаунт')
+    useTitle('Создать аккаунт')
 
-  const navigateFromSlug = useNavigateFromSlug()
+    const navigateToNotes = useNavigateToNotes()
 
-  const [login, setLogin] = useState('')
-  const [defferedLogin, serDefferedLogin] = useState(login)
-  const [password, setPassword] = useState('')
-  const [confurmPassword, setConfurmPassword] = useState('')
-  const [showHelper, setShowHelper] = useState(false)
-  const [isButtonAvalable, setIsButtonAvalable] = useState(false)
+    const [login, setLogin] = useState('')
+    const [defferedLogin, serDefferedLogin] = useState(login)
+    const [password, setPassword] = useState('')
+    const [confurmPassword, setConfurmPassword] = useState('')
+    const [showHelper, setShowHelper] = useState(false)
+    const [isButtonAvalable, setIsButtonAvalable] = useState(false)
 
-  const [setUser, setAuth] = useUser(
-    useShallow((state) => [state.setUser, state.setAuth])
-  )
+    const [setUser, setAuth] = useUser(
+        useShallow((state) => [state.setUser, state.setAuth])
+    )
 
-  const createErrorNotification = useErrorNotification()
+    const createErrorNotification = useErrorNotification()
 
-  const showHelperTiomeoutId = useRef<NodeJS.Timeout | undefined>(undefined)
-  const onQueryStart = () => {
-    setShowHelper(defferedLogin !== '')
-  }
-  const onQuerySettled = () => {
-    clearTimeout(showHelperTiomeoutId.current)
-    showHelperTiomeoutId.current = setTimeout(() => setShowHelper(false), 5000)
-  }
+    const showHelperTiomeoutId = useRef<NodeJS.Timeout | undefined>(undefined)
+    const onQueryStart = () => {
+        setShowHelper(defferedLogin !== '')
+    }
+    const onQuerySettled = () => {
+        clearTimeout(showHelperTiomeoutId.current)
+        showHelperTiomeoutId.current = setTimeout(() => setShowHelper(false), 5000)
+    }
 
-  const { isLoginExist, isFetching: isLoginFetching } = useCheckLogin(
-    defferedLogin,
-    onQueryStart,
-    onQuerySettled
-  )
-  const setDebouncedLogin = useDebounce((login) => {
-    if (typeof login !== 'string') return
-    serDefferedLogin(login)
-  }, 1000)
+    const { isLoginExist, isFetching: isLoginFetching } = useCheckLogin(
+        defferedLogin,
+        onQueryStart,
+        onQuerySettled
+    )
+    const setDebouncedLogin = useDebounce((login) => {
+        if (typeof login !== 'string') return
+        serDefferedLogin(login)
+    }, 1000)
 
-  const isPasswordExists = password.trim() !== ''
-  const isPassEqConfurm = confurmPassword === password
+    const isPasswordExists = password.trim() !== ''
+    const isPassEqConfurm = confurmPassword === password
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = useCallback(
-    async (e) => {
-      e.preventDefault()
+    const handleSubmit: FormEventHandler<HTMLFormElement> = useCallback(
+        async (e) => {
+            e.preventDefault()
 
-      const { data, error } = await supabase.from('users').insert({ login, password })
-        .select(`
+            const { data, error } = await supabase
+                .from('users')
+                .insert({ login, password }).select(`
             id,
             login,
             notes (
               id,
               name,
               payload,
-              created_at,
-              slug
+              created_at
             )
           `)
 
-      if (!data || error) {
-        createErrorNotification(
-          'Не удалось создать пользователя',
-          'Поробуйте ещё раз. Или обновите страницу'
-        )
-        return
-      }
+            if (!data || error) {
+                createErrorNotification(
+                    'Не удалось создать пользователя',
+                    'Поробуйте ещё раз. Или обновите страницу',
+                    `${Date.now()}`
+                )
+                return
+            }
 
-      const userId = data[0].id
+            const userId = data[0].id
 
-      const availableSlugs: string[] = data[0].notes.map((note) => note.slug)
+            const availableNotesId = data[0].notes.map((note) => note.id)
 
-      setAuth(true)
-      setUser(data[0].login, userId)
+            setAuth(true)
+            setUser(data[0].login, userId)
 
-      navigateFromSlug(userId, availableSlugs)
-    },
-    [login, password]
-  )
+            navigateToNotes(userId, availableNotesId)
+        },
+        [login, password]
+    )
 
-  const handleChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>, dispatch: Dispatch<SetStateAction<string>>) => {
-      dispatch(e.target.value.trim())
-    },
-    []
-  )
+    const handleChange = useCallback(
+        (
+            e: ChangeEvent<HTMLInputElement>,
+            dispatch: Dispatch<SetStateAction<string>>
+        ) => {
+            dispatch(e.target.value.trim())
+        },
+        []
+    )
 
-  const hangleLoginChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>, dispatch: Dispatch<SetStateAction<string>>) => {
-      setShowHelper(false)
-      setIsButtonAvalable(false)
-      dispatch(e.target.value.trim())
-      setDebouncedLogin(e.target.value.trim())
+    const hangleLoginChange = useCallback(
+        (
+            e: ChangeEvent<HTMLInputElement>,
+            dispatch: Dispatch<SetStateAction<string>>
+        ) => {
+            setShowHelper(false)
+            setIsButtonAvalable(false)
+            dispatch(e.target.value.trim())
+            setDebouncedLogin(e.target.value.trim())
 
-      if (e.target.value.trim().length < 1) {
-        return null
-      }
-    },
-    []
-  )
+            if (e.target.value.trim().length < 1) {
+                return null
+            }
+        },
+        []
+    )
 
-  const helper = showHelper ? (
-    isLoginFetching ? (
-      <span>Проверяем свободен ли логин...</span>
-    ) : (
-      <span>
-        {!isLoginExist ? (
-          <p className="text-emerald-400">Логин свободен</p>
+    const helper = showHelper ? (
+        isLoginFetching ? (
+            <span>Проверяем свободен ли логин...</span>
         ) : (
-          <p className="text-red-400">Логин занят!</p>
-        )}
-      </span>
+            <span>
+                {!isLoginExist ? (
+                    <p className="text-emerald-400">Логин свободен</p>
+                ) : (
+                    <p className="text-red-400">Логин занят!</p>
+                )}
+            </span>
+        )
+    ) : (
+        <></>
     )
-  ) : (
-    <></>
-  )
 
-  useEffect(() => {
-    setIsButtonAvalable(
-      !isLoginExist && isPasswordExists && isPassEqConfurm && !isLoginFetching
+    useEffect(() => {
+        setIsButtonAvalable(
+            !isLoginExist && isPasswordExists && isPassEqConfurm && !isLoginFetching
+        )
+    }, [isLoginExist, isPasswordExists, isPassEqConfurm, isLoginFetching])
+
+    return (
+        <>
+            <form
+                className="flex flex-col w-full max-w-[425px] min-h-[500px] items-center p-10 gap-4"
+                onSubmit={handleSubmit}
+            >
+                <h1>Регистрация</h1>
+                <div className="relative flex flex-col mt-6 w-full">
+                    <Input
+                        onFocus={(e) => (e.currentTarget.type = 'text')}
+                        placeholder="Логин"
+                        className={``}
+                        onChange={(e) => hangleLoginChange(e, setLogin)}
+                        required
+                    ></Input>
+                    <div className="text-sm self-end mt-1">{helper}</div>
+                </div>
+                <Input
+                    onFocus={(e) => (e.currentTarget.type = 'password')}
+                    placeholder="Пароль"
+                    className="w-full"
+                    onChange={(e) => handleChange(e, setPassword)}
+                    required
+                ></Input>
+                <Input
+                    onFocus={(e) => (e.currentTarget.type = 'password')}
+                    placeholder="Подтвердите пароль"
+                    className="w-full"
+                    onChange={(e) => handleChange(e, setConfurmPassword)}
+                    required
+                ></Input>
+
+                <FetchButton
+                    type="submit"
+                    disabled={!isButtonAvalable}
+                    isFetching={isLoginFetching}
+                >
+                    Зарегистрироваться
+                </FetchButton>
+
+                <p className=" mt-2">
+                    Уже есть аккаунт? <Link to="/">Войдите</Link>
+                </p>
+            </form>
+        </>
     )
-  }, [isLoginExist, isPasswordExists, isPassEqConfurm, isLoginFetching])
-
-  return (
-    <>
-      <form
-        className="flex flex-col w-full max-w-[425px] min-h-[500px] items-center p-10 gap-4"
-        onSubmit={handleSubmit}
-      >
-        <h1>Регистрация</h1>
-        <div className="relative flex flex-col mt-6 w-full">
-          <Input
-            onFocus={(e) => (e.currentTarget.type = 'text')}
-            placeholder="Логин"
-            className={``}
-            onChange={(e) => hangleLoginChange(e, setLogin)}
-            required
-          ></Input>
-          <div className="text-sm self-end mt-1">{helper}</div>
-        </div>
-        <Input
-          onFocus={(e) => (e.currentTarget.type = 'password')}
-          placeholder="Пароль"
-          className="w-full"
-          onChange={(e) => handleChange(e, setPassword)}
-          required
-        ></Input>
-        <Input
-          onFocus={(e) => (e.currentTarget.type = 'password')}
-          placeholder="Подтвердите пароль"
-          className="w-full"
-          onChange={(e) => handleChange(e, setConfurmPassword)}
-          required
-        ></Input>
-
-        <FetchButton
-          type="submit"
-          disabled={!isButtonAvalable}
-          isFetching={isLoginFetching}
-        >
-          Зарегистрироваться
-        </FetchButton>
-
-        <p className=" mt-2">
-          Уже есть аккаунт? <Link to="/">Войдите</Link>
-        </p>
-      </form>
-    </>
-  )
 }
 
 export { SignUp }

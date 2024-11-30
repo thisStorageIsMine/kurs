@@ -1,4 +1,5 @@
 import { supabase } from '../supabase'
+import { SupabaseMapper } from '../supabase/mapper'
 
 export const fetchNotes = async (userId: number) => {
     if (!userId) {
@@ -7,12 +8,12 @@ export const fetchNotes = async (userId: number) => {
 
     const { data, error } = await supabase
         .from('notes')
-        .select('created_at, name, payload, id, slug')
+        .select('created_at, name, payload, id, slug, user_id')
         .eq('user_id', userId)
 
     if (error) {
         throw new Error(error.message)
     }
 
-    return data
+    return data.map((note) => SupabaseMapper.getClientNotes(note))
 }

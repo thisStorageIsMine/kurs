@@ -1,6 +1,3 @@
 export * from './utilsHooks'
 export * from './useCheckLogin'
-export * from './useNavigateFromSlug'
-export * from './useHandleEdit'
-export * from './useHandleNoteEdit'
-export * from './useNotesQueryOprions'
+export * from './notes'

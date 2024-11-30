@@ -1,13 +1,28 @@
-import { useNotification } from "./Context"
+import { useNotification } from './Context'
 
 export const useSuccessNotification = () => {
-    const createNotification = useNotification()
+    const { add: createNotification } = useNotification()
 
-    return (title: string, text: string) => createNotification({ title, text, type: 'success' })
+    return (title: string, text: string, id: string) =>
+        createNotification({ title, text, type: 'success', id })
 }
 
 export const useErrorNotification = () => {
-    const createNotification = useNotification()
+    const { add: createNotification } = useNotification()
 
-    return (title: string, text: string) => createNotification({ title, text, type: 'error' })
+    return (title: string, text: string, id: string) =>
+        createNotification({ title, text, type: 'error', id })
+}
+
+export const useLoadNotification = () => {
+    const { add: createNotification } = useNotification()
+
+    return (text: string, id: string) =>
+        createNotification({ title: '', text, type: 'load', id })
+}
+
+export const useDeleteNotification = () => {
+    const { delete: deleteNotification } = useNotification()
+
+    return (id: string) => deleteNotification(id)
 }

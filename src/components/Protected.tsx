@@ -3,19 +3,19 @@ import { useUser } from '../store'
 import { ReactNode } from 'react'
 
 export interface IProtectedProps {
-  children: ReactNode
+    children: ReactNode
 }
 
 const Protected = ({ children }: IProtectedProps) => {
-  const location = useLocation(),
-    origin = location.pathname
-  const isAuth = useUser((state) => state.isAuth)
+    const location = useLocation(),
+        origin = location.pathname
+    const isAuth = useUser((state) => state.isAuth)
 
-  if (!isAuth) {
-    return <Navigate to="/" state={{ origin }} />
-  }
+    if (!isAuth) {
+        return <Navigate to="/" state={{ origin }} />
+    }
 
-  return <>{children}</>
+    return <>{children}</>
 }
 
 export { Protected }

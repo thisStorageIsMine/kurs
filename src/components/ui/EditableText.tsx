@@ -10,6 +10,7 @@ import cn from 'classnames'
 export interface EditableTextProps {
     text: string
     as: string
+    placeholder: string
     className?: string
     editorClassName?: string
     onChange?: (text: string, e: ChangeEvent<HTMLTextAreaElement>) => void
@@ -17,6 +18,7 @@ export interface EditableTextProps {
 export const EditableText = ({
     text,
     as,
+    placeholder,
     className,
     editorClassName,
     onChange,
@@ -58,6 +60,7 @@ export const EditableText = ({
                 )}
                 onChange={handleChange}
                 rows={1}
+                placeholder={placeholder}
                 onBlur={() => setIsEditing(false)}
                 ref={setEditorRef}
                 value={content}

@@ -1,7 +1,3 @@
-export type TNote = {
-  id: number
-  name: string
-  payload: string
-  slug: string
-  createdAt: number | string
-}
+import { SupabaseMapper } from '../supabase/mapper'
+
+export type TNote = ReturnType<typeof SupabaseMapper.getClientNotes>

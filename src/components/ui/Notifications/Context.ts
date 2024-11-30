@@ -1,8 +1,13 @@
-import { createContext, useContext } from "react";
-import { INotification } from "./Provider";
+import { createContext, useContext } from 'react'
+import { INotification } from './Provider'
 
-export type TNotificationContext = (ctx: INotification) => void
+export type TNotificationContext = {
+    add: (ctx: INotification) => void
+    delete: (id: string) => void
+}
 
-
-export const NotificationContext = createContext<TNotificationContext>(() => { })
-export const useNotification = () => useContext(NotificationContext);
+export const NotificationContext = createContext<TNotificationContext>({
+    add: () => {},
+    delete: () => {},
+})
+export const useNotification = () => useContext(NotificationContext)

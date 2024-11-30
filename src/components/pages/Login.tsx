@@ -6,14 +6,14 @@ import React, { ChangeEvent, Dispatch, SetStateAction, useState } from 'react'
 import { useErrorNotification } from '../ui/Notifications/hooks'
 import { useUser } from '../../store'
 import { supabase } from '../../supabase'
-import { useNavigateFromSlug } from '../../hooks/'
+import { useNavigateToNotes } from '../../hooks/'
 
 const Login = () => {
     useTitle('Войти в заметочную')
     const { setAuth } = useUser()
     const { setUser } = useUser()
 
-    const navigateFromSlug = useNavigateFromSlug()
+    const navigateToNotes = useNavigateToNotes()
 
     const showErrorNotification = useErrorNotification()
 
@@ -33,7 +33,6 @@ const Login = () => {
           id,
           notes (
             id,
-            slug,
             name,
             payload,
             created_at
@@ -43,19 +42,22 @@ const Login = () => {
             .eq('login', login)
 
         if (!data || error || data.length === 0) {
-            showErrorNotification('Не удалось войти', 'Неправильный логин или пароль')
+            showErrorNotification(
+                'Не удалось войти',
+                'Неправильный логин или пароль',
+                `${Date.now()}`
+            )
             return
         }
 
         const userId = data[0].id
-        const availableSlugs = data[0].notes.map((note) => note.slug)
+        const availableIds = data[0].notes.map((note) => note.id)
 
         setAuth(true)
         // @ts-expect-error: Cannot find name
         _tmr.push({ type: 'reachGoal', id: 3582359, goal: 'login' })
         setUser(data[0].login, userId)
-
-        navigateFromSlug(userId, availableSlugs)
+        navigateToNotes(userId, availableIds)
     }
 
     const handleChange = (
