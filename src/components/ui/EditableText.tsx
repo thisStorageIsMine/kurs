@@ -22,16 +22,18 @@ export const EditableText = ({
     onChange,
 }: EditableTextProps) => {
     const [isEditing, setIsEditing] = useState(false)
+    const [content, setContent] = useState(text)
 
     const elem = createElement(as, {
         className: className,
-        children: text,
+        children: content,
         onDoubleClick: () => setIsEditing(true),
     })
 
     const handleChange: ChangeEventHandler<HTMLTextAreaElement> = useCallback((e) => {
         if (!onChange) return
 
+        setContent(e.target.value)
         onChange(e.target.value, e)
     }, [])
 
@@ -58,7 +60,7 @@ export const EditableText = ({
                 rows={1}
                 onBlur={() => setIsEditing(false)}
                 ref={setEditorRef}
-                value={text}
+                value={content}
             />
 
             {isEditing ? <></> : elem}

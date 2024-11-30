@@ -1,15 +1,16 @@
 import { useParams } from 'react-router-dom'
 import { Editor } from '..'
-import { useUser } from '../../store'
-import { useHandleNoteEdit } from '../../hooks'
+import { useHandleNoteEdit, useNotesQueryOptions } from '../../hooks'
 import { queryClient } from '../../App'
 
 export const Note = () => {
     const { note: noteSlug } = useParams()
-    const userId = useUser((state) => state.user?.id)
+    const notesQueryOptions = useNotesQueryOptions()
 
-    const note = queryClient.getQueryData(['user', userId])
-    // const handleEdit = useHandleEdit(note?.id, note?.slug)
+    const note = queryClient
+        .getQueryData(notesQueryOptions().queryKey)
+        ?.find((n) => n.slug === noteSlug)
+
     const { handleEdit, mutation } = useHandleNoteEdit(note?.id)
 
     if (!note) {

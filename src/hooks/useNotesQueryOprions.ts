@@ -1,4 +1,4 @@
-import { queryOptions } from '@tanstack/react-query'
+import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import { useUser } from '../store'
 import { fetchNotes } from '../helpers'
 
@@ -17,5 +17,7 @@ export const useNotesQueryOptions = () => {
 
                 return await fetchNotes(Number(userId))
             },
+            placeholderData: keepPreviousData,
+            refetchOnWindowFocus: false,
         })
 }
