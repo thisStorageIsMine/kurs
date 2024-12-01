@@ -8,12 +8,14 @@ export const fetchNotes = async (userId: number) => {
 
     const { data, error } = await supabase
         .from('notes')
-        .select('created_at, name, payload, id, slug, user_id')
+        .select('created_at, name, payload, id, user_id, last_edit')
         .eq('user_id', userId)
 
     if (error) {
         throw new Error(error.message)
     }
 
-    return data.map((note) => SupabaseMapper.getClientNotes(note))
+    const notes = data.map((note) => SupabaseMapper.getClientNotes(note))
+
+    return notes.sort((a, b) => (a.lastEdit > b.lastEdit ? 1 : -1))
 }

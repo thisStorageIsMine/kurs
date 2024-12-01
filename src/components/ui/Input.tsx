@@ -1,11 +1,11 @@
-import { DetailedHTMLProps, forwardRef, InputHTMLAttributes } from 'react'
+import { DetailedHTMLProps, forwardRef, InputHTMLAttributes, memo } from 'react'
 import cn from 'classnames'
 
 export interface IInputProps
     extends DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {}
 
-const Input = forwardRef<HTMLInputElement, IInputProps>(
-    ({ className, ...props }, ref) => {
+const Input = memo(
+    forwardRef<HTMLInputElement, IInputProps>(({ className, ...props }, ref) => {
         return (
             <input
                 ref={ref}
@@ -16,7 +16,7 @@ const Input = forwardRef<HTMLInputElement, IInputProps>(
                 {...props}
             />
         )
-    }
+    })
 )
 
 export { Input }

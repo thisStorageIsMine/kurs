@@ -1,9 +1,10 @@
 import cn from 'classnames'
+import { memo } from 'react'
 
 export interface ILoadNotificationProps extends React.HTMLAttributes<HTMLDivElement> {
     text: string
 }
-export const LoadNotification = ({ text, className }: ILoadNotificationProps) => {
+export const LoadNotification = memo(({ text, className }: ILoadNotificationProps) => {
     return (
         <div
             className={cn(
@@ -22,4 +23,4 @@ export const LoadNotification = ({ text, className }: ILoadNotificationProps) =>
             {text}
         </div>
     )
-}
+})

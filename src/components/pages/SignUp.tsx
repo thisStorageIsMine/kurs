@@ -71,7 +71,8 @@ const SignUp = () => {
               id,
               name,
               payload,
-              created_at
+              created_at,
+              last_edit
             )
           `)
 

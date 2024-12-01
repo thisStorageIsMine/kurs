@@ -1,19 +1,13 @@
-import { create } from 'zustand'
-import { immer } from 'zustand/middleware/immer'
-import { TNotesStore, TNotesStoreActions } from '.'
+// import { create } from 'zustand'
+// import { immer } from 'zustand/middleware/immer'
+// import { TUseTempNote, TUseTempNoteActions } from '.'
 
-export const useNotesStore = create<TNotesStore & TNotesStoreActions>()(
-  immer((set) => ({
-    notes: [],
-    addNote: (note) => set((state) => {
-      state.notes.push(note)
-    }),
-    deleteNote: (id) => set((state) => {
-      state.notes = state.notes.filter(n => n.id !== id)
-    }),
-    setNotes: (notes) =>
-      set((state) => {
-        state.notes = notes
-      }),
-  }))
-)
+// export const useTempNote = create<TUseTempNote & TUseTempNoteActions>()(
+//     immer((set) => ({
+//         tempNote: null,
+//         setTempNote: (tempNote) =>
+//             set(() => ({
+//                 tempNote,
+//             })),
+//     }))
+// )

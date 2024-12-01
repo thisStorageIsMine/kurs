@@ -1,8 +1,9 @@
 import cn from 'classnames'
+import { memo } from 'react'
 
 export interface ILoaderProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export const Loader = ({ className, ...props }: ILoaderProps) => {
+export const Loader = memo(({ className, ...props }: ILoaderProps) => {
     return (
         <div
             className={cn('flex flex-col justify-center items-center', className)}
@@ -55,4 +56,4 @@ export const Loader = ({ className, ...props }: ILoaderProps) => {
             </div>
         </div>
     )
-}
+})

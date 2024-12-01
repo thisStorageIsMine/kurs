@@ -8,47 +8,42 @@ import {
     useLoadNotification,
 } from '..'
 import { useUser } from '../../store'
-import { useNotesQueryOptions } from '../../hooks'
+import { useInsertNote, useNotesQueryOptions } from '../../hooks'
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
-import { queryClient } from '../../App'
-import { TNote } from '../../types'
-// import { supabase } from '../../supabase'
+import { useEffect, useMemo, useState } from 'react'
 
 export const Notes = () => {
     const { userId: userIdFromParams } = useParams()
     const authentificatedUser = useUser((state) => state.user?.name)
-    const [isInitialRender, setIsInitialRender] = useState(true)
     const userId = useUser((state) => state.user?.id)
+
+    const [isInitialRender, setIsInitialRender] = useState(true)
+
     const navigate = useNavigate()
     const createLoadNotification = useLoadNotification()
     const deleteNotification = useDeleteNotification()
 
+    const insertNoteMutation = useInsertNote()
+
     const notesQueryOptions = useNotesQueryOptions({
-        onStart: () => createLoadNotification('Заметка загружается', 'load'),
+        onStart: () => createLoadNotification('Заметки загружаются', 'load'),
         onSettled: () => deleteNotification('load'),
     })
 
-    const { data: notes, isError, isFetching } = useQuery(notesQueryOptions())
+    const queryOptions = useMemo(() => notesQueryOptions(), [notesQueryOptions])
+
+    const { data: notes, isError, isFetching } = useQuery(queryOptions)
 
     const handleAddBtnClick = async () => {
-        queryClient.setQueriesData<TNote[]>(
-            {
-                queryKey: notesQueryOptions().queryKey,
-                type: 'all',
-            },
-            (prev) => {
-                if (!prev || prev.find((n) => n.id === -1)) return prev
+        const newNote = {
+            id: -1,
+            name: 'Без названия',
+            payload: 'текст',
+            createdAt: new Date().toISOString(),
+            lastEdit: new Date().toISOString(),
+        }
 
-                const newNote: TNote = {
-                    id: -1,
-                    name: '',
-                    payload: '',
-                    createdAt: new Date().toISOString(),
-                }
-                return [...prev, newNote]
-            }
-        )
+        insertNoteMutation.mutate(newNote)
     }
 
     useEffect(() => {
@@ -66,8 +61,9 @@ export const Notes = () => {
     }
 
     if ((isError || !notes) && isFetching === false) {
-        throw new Error('Произошла ошибка')
+        throw new Error('Произошла ошибка. Попробуйте перезагрузить страницу')
     }
+
     return (
         <main className="w-screen h-screen p-2 lg:p-10 overflow-hidden flex flex-col">
             <div className="rounded-md flex w-full border border-slate-300 overflow-hidden flex-auto">
@@ -85,7 +81,7 @@ export const Notes = () => {
                                         id={n.id}
                                         payload={n.payload}
                                         name={n.name}
-                                        createdAt={n.createdAt}
+                                        lastEdit={n.lastEdit}
                                         href={`${n.id}`}
                                         className="last-of-type:border-b"
                                         key={n.id}
@@ -93,7 +89,7 @@ export const Notes = () => {
                                 ))}
                             </>
                         </nav>
-                        <section className="border-l border-slate-300">
+                        <section className="border-l border-slate-300 w-full">
                             <Outlet />
                         </section>
                     </>

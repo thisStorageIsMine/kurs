@@ -1,10 +1,12 @@
+import { memo } from 'react'
+
 export interface ISuccessNotifyProps {
     title: string
     text: string
     onClose: () => void
 }
 
-const SuccessNotify = ({ title, text, onClose }: ISuccessNotifyProps) => {
+const SuccessNotify = memo(({ title, text, onClose }: ISuccessNotifyProps) => {
     return (
         <div className="w-full rounded-lg overflow-hidden relative items-stretch shadow-xl bg-white text-[#333342]">
             <div className="flex flex-1 flex-col gap-3 p-2">
@@ -20,6 +22,6 @@ const SuccessNotify = ({ title, text, onClose }: ISuccessNotifyProps) => {
             </button>
         </div>
     )
-}
+})
 
 export { SuccessNotify }

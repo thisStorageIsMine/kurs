@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useState } from 'react'
+import { ReactNode, memo, useCallback, useState } from 'react'
 import { NotificationContext } from './Context'
 import { NotificationContainer } from './NotificationContainer'
 
@@ -9,7 +9,7 @@ export interface INotification {
     type: 'success' | 'error' | 'load'
 }
 
-export const NotificationsProvider = ({ children }: { children: ReactNode }) => {
+export const NotificationsProvider = memo(({ children }: { children: ReactNode }) => {
     const [nots, setNots] = useState<INotification[]>([])
 
     const addNot = useCallback((ctx: INotification) => {
@@ -34,4 +34,4 @@ export const NotificationsProvider = ({ children }: { children: ReactNode }) => 
             <NotificationContainer nots={nots} setNots={setNots} />
         </NotificationContext.Provider>
     )
-}
+})

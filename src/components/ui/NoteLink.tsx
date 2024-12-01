@@ -1,13 +1,14 @@
 import { NavLink } from 'react-router-dom'
 import { TNote } from '../../types'
 import cn from 'classnames'
+import { useMemo } from 'react'
 
 export interface INoteProps extends TNote {
     href: string
     className?: string
 }
-export const NoteLink = ({ name, payload, createdAt, href, className }: INoteProps) => {
-    const date = new Date(createdAt).toLocaleDateString('ru-RU')
+export const NoteLink = ({ name, payload, lastEdit, href, className }: INoteProps) => {
+    const date = useMemo(() => new Date(lastEdit).toLocaleDateString('ru-RU'), [lastEdit])
 
     return (
         <NavLink

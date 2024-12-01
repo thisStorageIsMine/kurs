@@ -14,7 +14,7 @@ const useCheckLogin = (login: string, onStart?: () => void, onSettled?: () => vo
 
             const { data, error } = await supabase
                 .from('users')
-                .select('login')
+                .select('login, id')
                 .eq('login', login)
 
             if (error || !data) {
@@ -26,6 +26,8 @@ const useCheckLogin = (login: string, onStart?: () => void, onSettled?: () => vo
             if (onSettled) {
                 onSettled()
             }
+
+            return data
         },
         refetchOnMount: false,
     })

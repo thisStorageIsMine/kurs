@@ -1,10 +1,12 @@
+import { memo } from 'react'
+
 export interface IErrorNotifyProps {
     title: string
     text: string
     onClose: () => void
 }
 
-const ErrorNotify = ({ title, text, onClose }: IErrorNotifyProps) => {
+const ErrorNotify = memo(({ title, text, onClose }: IErrorNotifyProps) => {
     return (
         <div className="flex w-full rounded-lg overflow-hidden relative items-stretch shadow-xl bg-red-500 text-white">
             <div className="flex flex-1 flex-col gap-3 p-2">
@@ -20,6 +22,6 @@ const ErrorNotify = ({ title, text, onClose }: IErrorNotifyProps) => {
             </button>
         </div>
     )
-}
+})
 
 export { ErrorNotify }

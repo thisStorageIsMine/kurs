@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, memo } from 'react'
 import { ErrorNotify } from './ErrorNotify'
 import { INotification } from './Provider'
 import { SuccessNotify } from './SuccessNotify'
@@ -9,7 +9,7 @@ export interface INotificationContainerProps {
     setNots: Dispatch<SetStateAction<INotification[]>>
 }
 
-const NotificationContainer = ({ nots, setNots }: INotificationContainerProps) => {
+const NotificationContainer = memo(({ nots, setNots }: INotificationContainerProps) => {
     return (
         <div className="absolute w-[420px] bottom-10 right-10 gap-4 flex flex-col">
             {nots.map((notify, id) => {
@@ -44,6 +44,5 @@ const NotificationContainer = ({ nots, setNots }: INotificationContainerProps) =
             })}
         </div>
     )
-}
-
+})
 export { NotificationContainer }
