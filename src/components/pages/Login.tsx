@@ -6,7 +6,8 @@ import React, { ChangeEvent, Dispatch, SetStateAction, useState } from 'react'
 import { useErrorNotification } from '../ui/Notifications/hooks'
 import { useUser } from '../../store'
 import { supabase } from '../../supabase'
-import { useNavigateToNotes } from '../../hooks/'
+import { useLogin, useNavigateToNotes } from '../../hooks/'
+import { TLoginResponse } from '../../api/fetchs'
 
 const Login = () => {
     useTitle('Войти в заметочную')
@@ -16,6 +17,29 @@ const Login = () => {
     const navigateToNotes = useNavigateToNotes()
 
     const showErrorNotification = useErrorNotification()
+
+    const onLoginError = () =>
+            showErrorNotification(
+                'Не удалось войти',
+                'Неправильный логин или пароль',
+                `${Date.now()}`
+            ),
+        onLoginSettled = (data: TLoginResponse | undefined) => {
+            if (!data) return
+
+            const userId = data.id
+            // const availableIds = data[0].notes.map((note) => note.id)
+
+            setAuth(true)
+            // @ts-expect-error: Cannot find name
+            _tmr.push({ type: 'reachGoal', id: 3582359, goal: 'login' })
+            setUser(data.login, userId)
+            // navigateToNotes(userId, availableIds)
+        }
+
+    const handleLogin = useLogin({
+        onError: onLoginError,
+    })
 
     const [login, setLogin] = useState('')
     const [password, setPassword] = useState('')
@@ -42,22 +66,8 @@ const Login = () => {
             .eq('login', login)
 
         if (!data || error || data.length === 0) {
-            showErrorNotification(
-                'Не удалось войти',
-                'Неправильный логин или пароль',
-                `${Date.now()}`
-            )
             return
         }
-
-        const userId = data[0].id
-        const availableIds = data[0].notes.map((note) => note.id)
-
-        setAuth(true)
-        // @ts-expect-error: Cannot find name
-        _tmr.push({ type: 'reachGoal', id: 3582359, goal: 'login' })
-        setUser(data[0].login, userId)
-        navigateToNotes(userId, availableIds)
     }
 
     const handleChange = (
