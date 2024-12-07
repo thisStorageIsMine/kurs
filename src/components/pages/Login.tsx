@@ -5,16 +5,16 @@ import { useTitle } from '../../hooks/utilsHooks'
 import React, { ChangeEvent, Dispatch, SetStateAction, useState } from 'react'
 import { useErrorNotification } from '../ui/Notifications/hooks'
 import { useUser } from '../../store'
-import { supabase } from '../../supabase'
-import { useLogin, useNavigateToNotes } from '../../hooks/'
-import { TLoginResponse } from '../../api/fetchs'
+import { useLogin } from '../../hooks/'
+import { TAuthnResponse } from '../../api/fetchs'
 
 const Login = () => {
     useTitle('Войти в заметочную')
     const { setAuth } = useUser()
     const { setUser } = useUser()
 
-    const navigateToNotes = useNavigateToNotes()
+    // const navigate
+    // const navigateToNotes = useNavigateToNotes()
 
     const showErrorNotification = useErrorNotification()
 
@@ -24,11 +24,10 @@ const Login = () => {
                 'Неправильный логин или пароль',
                 `${Date.now()}`
             ),
-        onLoginSettled = (data: TLoginResponse | undefined) => {
+        onLoginSettled = (data: TAuthnResponse | undefined) => {
             if (!data) return
 
             const userId = data.id
-            // const availableIds = data[0].notes.map((note) => note.id)
 
             setAuth(true)
             // @ts-expect-error: Cannot find name
@@ -39,6 +38,7 @@ const Login = () => {
 
     const handleLogin = useLogin({
         onError: onLoginError,
+        onSettled: onLoginSettled,
     })
 
     const [login, setLogin] = useState('')
@@ -48,26 +48,27 @@ const Login = () => {
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
+        handleLogin({ login, password })
 
-        const { data, error } = await supabase
-            .from('users')
-            .select(
-                `
-          login, 
-          id,
-          notes (
-            id,
-            name,
-            payload,
-            created_at
-          )
-        `
-            )
-            .eq('login', login)
+        // const { data, error } = await supabase
+        //     .from('users')
+        //     .select(
+        //         `
+        //   login,
+        //   id,
+        //   notes (
+        //     id,
+        //     name,
+        //     payload,
+        //     created_at
+        //   )
+        // `
+        //     )
+        //     .eq('login', login)
 
-        if (!data || error || data.length === 0) {
-            return
-        }
+        // if (!data || error || data.length === 0) {
+        //     return
+        // }
     }
 
     const handleChange = (

@@ -1,38 +1,27 @@
-import { useState } from 'react'
-import { supabase } from '../supabase'
+import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { fetchIsLoginExists } from '../api/fetchs'
 
-const useCheckLogin = (login: string, onStart?: () => void, onSettled?: () => void) => {
-    const [isLoginExist, setIsLoginExist] = useState(false)
-
-    const { isFetching, isError } = useQuery({
-        queryKey: ['getLogin', login],
+const useCheckLogin = (
+    login: string
+    // onStart: () => void,
+    // onSettled: () => void,
+    // onError: () => void
+) => {
+    const { refetch } = useQuery({
+        queryKey: ['checkLogin', login],
         queryFn: async () => {
-            if (onStart) {
-                onStart()
-            }
+            // if (onStart) {
+            //     onStart()
+            // }
 
-            const { data, error } = await supabase
-                .from('users')
-                .select('login, id')
-                .eq('login', login)
-
-            if (error || !data) {
-                throw new Error('Failed to check login avalability')
-            }
-
-            setIsLoginExist(data.length !== 0)
-
-            if (onSettled) {
-                onSettled()
-            }
-
-            return data
+            const { is_exists: isExists } = await fetchIsLoginExists(login)
+            return isExists
         },
-        refetchOnMount: false,
+        enabled: false,
     })
 
-    return { isLoginExist, isFetching, isError }
+    return useMemo(() => refetch, [refetch])
 }
 
 export { useCheckLogin }

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { FetchButton, Input } from '../ui'
-import { useDebounce, useTitle } from '../../hooks/utilsHooks'
+import { useTitle } from '../../hooks/utilsHooks'
 import {
     ChangeEvent,
     Dispatch,
@@ -8,12 +8,11 @@ import {
     SetStateAction,
     useCallback,
     useEffect,
-    useRef,
     useState,
 } from 'react'
 import { supabase } from '../../supabase'
 import { useErrorNotification } from '../ui/Notifications/hooks'
-import { useCheckLogin, useNavigateToNotes } from '../../hooks/'
+import { useHandleLoginChange, useNavigateToNotes } from '../../hooks/'
 import { useUser } from '../../store'
 
 import { useShallow } from 'zustand/react/shallow'
@@ -23,11 +22,8 @@ const SignUp = () => {
 
     const navigateToNotes = useNavigateToNotes()
 
-    const [login, setLogin] = useState('')
-    const [defferedLogin, serDefferedLogin] = useState(login)
     const [password, setPassword] = useState('')
     const [confurmPassword, setConfurmPassword] = useState('')
-    const [showHelper, setShowHelper] = useState(false)
     const [isButtonAvalable, setIsButtonAvalable] = useState(false)
 
     const [setUser, setAuth] = useUser(
@@ -36,24 +32,8 @@ const SignUp = () => {
 
     const createErrorNotification = useErrorNotification()
 
-    const showHelperTiomeoutId = useRef<NodeJS.Timeout | undefined>(undefined)
-    const onQueryStart = () => {
-        setShowHelper(defferedLogin !== '')
-    }
-    const onQuerySettled = () => {
-        clearTimeout(showHelperTiomeoutId.current)
-        showHelperTiomeoutId.current = setTimeout(() => setShowHelper(false), 5000)
-    }
-
-    const { isLoginExist, isFetching: isLoginFetching } = useCheckLogin(
-        defferedLogin,
-        onQueryStart,
-        onQuerySettled
-    )
-    const setDebouncedLogin = useDebounce((login) => {
-        if (typeof login !== 'string') return
-        serDefferedLogin(login)
-    }, 1000)
+    const { login, showHelper, isCheckingLogin, handleLoginChange, isLoginExists } =
+        useHandleLoginChange()
 
     const isPasswordExists = password.trim() !== ''
     const isPassEqConfurm = confurmPassword === password
@@ -107,29 +87,12 @@ const SignUp = () => {
         []
     )
 
-    const hangleLoginChange = useCallback(
-        (
-            e: ChangeEvent<HTMLInputElement>,
-            dispatch: Dispatch<SetStateAction<string>>
-        ) => {
-            setShowHelper(false)
-            setIsButtonAvalable(false)
-            dispatch(e.target.value.trim())
-            setDebouncedLogin(e.target.value.trim())
-
-            if (e.target.value.trim().length < 1) {
-                return null
-            }
-        },
-        []
-    )
-
     const helper = showHelper ? (
-        isLoginFetching ? (
+        isCheckingLogin ? (
             <span>Проверяем свободен ли логин...</span>
         ) : (
             <span>
-                {!isLoginExist ? (
+                {!isLoginExists ? (
                     <p className="text-emerald-400">Логин свободен</p>
                 ) : (
                     <p className="text-red-400">Логин занят!</p>
@@ -142,9 +105,9 @@ const SignUp = () => {
 
     useEffect(() => {
         setIsButtonAvalable(
-            !isLoginExist && isPasswordExists && isPassEqConfurm && !isLoginFetching
+            !isLoginExists && isPasswordExists && isPassEqConfurm && !isCheckingLogin
         )
-    }, [isLoginExist, isPasswordExists, isPassEqConfurm, isLoginFetching])
+    }, [isLoginExists, isPasswordExists, isPassEqConfurm, isCheckingLogin])
 
     return (
         <>
@@ -158,7 +121,7 @@ const SignUp = () => {
                         onFocus={(e) => (e.currentTarget.type = 'text')}
                         placeholder="Логин"
                         className={``}
-                        onChange={(e) => hangleLoginChange(e, setLogin)}
+                        onChange={(e) => handleLoginChange(e)}
                         required
                     ></Input>
                     <div className="text-sm self-end mt-1">{helper}</div>
@@ -181,7 +144,7 @@ const SignUp = () => {
                 <FetchButton
                     type="submit"
                     disabled={!isButtonAvalable}
-                    isFetching={isLoginFetching}
+                    isFetching={isCheckingLogin}
                 >
                     Зарегистрироваться
                 </FetchButton>

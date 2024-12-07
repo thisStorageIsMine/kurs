@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { asyncWrap } from '../helpers'
-import { fetchLogin } from '../api/fetchs'
+import { TAuthnResponse, fetchAuth } from '../api/fetchs'
 
 type TUser = {
     login: string
@@ -9,14 +9,14 @@ type TUser = {
 
 export type TUseLoginConfig = {
     onError: () => void
-    onSettled: () => void
+    onSettled: (data: TAuthnResponse | undefined) => void
 }
 
 export const useLogin = ({ onError, onSettled }: TUseLoginConfig) => {
     const { mutate } = useMutation({
         mutationKey: ['login'],
         mutationFn: async (body: TUser) => {
-            const [data, error] = await asyncWrap(fetchLogin(body))
+            const [data, error] = await asyncWrap(fetchAuth(body, 'login'))
 
             if (error !== null) {
                 throw error
