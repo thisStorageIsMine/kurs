@@ -25,7 +25,7 @@ export const useLogin = ({ onError, onSettled }: TUseLoginConfig) => {
             return data
         },
         onError,
-        onSettled: (data) => {},
+        onSettled,
     })
 
     return mutate
