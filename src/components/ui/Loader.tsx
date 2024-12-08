@@ -17,9 +17,9 @@ export const Loader = memo(({ className, ...props }: ILoaderProps) => {
                 >
                     <circle
                         fill="none"
-                        stroke-opacity="1"
+                        strokeOpacity="1"
                         stroke="#646CFF"
-                        stroke-width=".5"
+                        strokeWidth=".5"
                         cx="100"
                         cy="100"
                         r="0"

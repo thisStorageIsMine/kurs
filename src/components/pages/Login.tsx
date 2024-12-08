@@ -3,43 +3,12 @@ import { FetchButton, Input } from '../ui'
 import { useTitle } from '../../hooks/utilsHooks'
 
 import React, { ChangeEvent, Dispatch, SetStateAction, useState } from 'react'
-import { useErrorNotification } from '../ui/Notifications/hooks'
-import { useUser } from '../../store'
-import { useLogin } from '../../hooks/'
-import { TAuthnResponse } from '../../api/fetchs'
+import { useHandleLogin } from '../../hooks/'
 
 const Login = () => {
     useTitle('Войти в заметочную')
-    const { setAuth } = useUser()
-    const { setUser } = useUser()
 
-    // const navigate
-    // const navigateToNotes = useNavigateToNotes()
-
-    const showErrorNotification = useErrorNotification()
-
-    const onLoginError = () =>
-            showErrorNotification(
-                'Не удалось войти',
-                'Неправильный логин или пароль',
-                `${Date.now()}`
-            ),
-        onLoginSettled = (data: TAuthnResponse | undefined) => {
-            if (!data) return
-
-            const userId = data.id
-
-            setAuth(true)
-            // @ts-expect-error: Cannot find name
-            _tmr.push({ type: 'reachGoal', id: 3582359, goal: 'login' })
-            setUser(data.login, userId)
-            // navigateToNotes(userId, availableIds)
-        }
-
-    const handleLogin = useLogin({
-        onError: onLoginError,
-        onSettled: onLoginSettled,
-    })
+    const handleLogin = useHandleLogin()
 
     const [login, setLogin] = useState('')
     const [password, setPassword] = useState('')
@@ -49,26 +18,6 @@ const Login = () => {
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         handleLogin({ login, password })
-
-        // const { data, error } = await supabase
-        //     .from('users')
-        //     .select(
-        //         `
-        //   login,
-        //   id,
-        //   notes (
-        //     id,
-        //     name,
-        //     payload,
-        //     created_at
-        //   )
-        // `
-        //     )
-        //     .eq('login', login)
-
-        // if (!data || error || data.length === 0) {
-        //     return
-        // }
     }
 
     const handleChange = (

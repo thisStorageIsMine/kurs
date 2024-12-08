@@ -1,6 +1,6 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import { useUser } from '../../store'
-import { fetchNotes } from '../../helpers'
+import { fethcNotesFromDeepkit } from '../../api/fetchs'
 
 export type TUseNotesQueryOptions = {
     onStart?: () => void
@@ -19,19 +19,20 @@ export const useNotesQueryOptions = (options: TUseNotesQueryOptions = {}) => {
                     onStart()
                 }
 
-                const userId = queryKey[1]
+                const userId = Number(queryKey[1])
 
-                if (!userId) {
-                    throw new Error('No userID')
+                if (!userId || typeof userId !== 'number') {
+                    throw new Error("No userID or it's isn't number")
                 }
 
-                const data = await fetchNotes(Number(userId))
+                // const data = await fetchNotes(Number(userId))
+                const notes = await fethcNotesFromDeepkit(userId)
 
                 if (onSettled) {
                     onSettled()
                 }
 
-                return data
+                return notes
             },
             placeholderData: keepPreviousData,
             refetchOnWindowFocus: false,

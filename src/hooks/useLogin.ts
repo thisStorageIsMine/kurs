@@ -13,7 +13,7 @@ export type TUseLoginConfig = {
 }
 
 export const useLogin = ({ onError, onSettled }: TUseLoginConfig) => {
-    const { mutate } = useMutation({
+    const { mutateAsync } = useMutation({
         mutationKey: ['login'],
         mutationFn: async (body: TUser) => {
             const [data, error] = await asyncWrap(fetchAuth(body, 'login'))
@@ -28,5 +28,5 @@ export const useLogin = ({ onError, onSettled }: TUseLoginConfig) => {
         onSettled,
     })
 
-    return mutate
+    return mutateAsync
 }

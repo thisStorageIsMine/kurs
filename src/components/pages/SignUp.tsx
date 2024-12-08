@@ -10,27 +10,14 @@ import {
     useEffect,
     useState,
 } from 'react'
-import { supabase } from '../../supabase'
-import { useErrorNotification } from '../ui/Notifications/hooks'
-import { useHandleLoginChange, useNavigateToNotes } from '../../hooks/'
-import { useUser } from '../../store'
-
-import { useShallow } from 'zustand/react/shallow'
+import { useHandleLoginChange, useHandleSignup } from '../../hooks/'
 
 const SignUp = () => {
     useTitle('Создать аккаунт')
 
-    const navigateToNotes = useNavigateToNotes()
-
     const [password, setPassword] = useState('')
     const [confurmPassword, setConfurmPassword] = useState('')
     const [isButtonAvalable, setIsButtonAvalable] = useState(false)
-
-    const [setUser, setAuth] = useUser(
-        useShallow((state) => [state.setUser, state.setAuth])
-    )
-
-    const createErrorNotification = useErrorNotification()
 
     const { login, showHelper, isCheckingLogin, handleLoginChange, isLoginExists } =
         useHandleLoginChange()
@@ -38,44 +25,10 @@ const SignUp = () => {
     const isPasswordExists = password.trim() !== ''
     const isPassEqConfurm = confurmPassword === password
 
-    const handleSubmit: FormEventHandler<HTMLFormElement> = useCallback(
-        async (e) => {
-            e.preventDefault()
-
-            const { data, error } = await supabase
-                .from('users')
-                .insert({ login, password }).select(`
-            id,
-            login,
-            notes (
-              id,
-              name,
-              payload,
-              created_at,
-              last_edit
-            )
-          `)
-
-            if (!data || error) {
-                createErrorNotification(
-                    'Не удалось создать пользователя',
-                    'Поробуйте ещё раз. Или обновите страницу',
-                    `${Date.now()}`
-                )
-                return
-            }
-
-            const userId = data[0].id
-
-            const availableNotesId = data[0].notes.map((note) => note.id)
-
-            setAuth(true)
-            setUser(data[0].login, userId)
-
-            navigateToNotes(userId, availableNotesId)
-        },
-        [login, password]
-    )
+    const handleSubmit: FormEventHandler<HTMLFormElement> = useHandleSignup({
+        login,
+        password,
+    })
 
     const handleChange = useCallback(
         (

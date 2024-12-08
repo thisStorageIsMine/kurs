@@ -39,7 +39,7 @@ const NotificationContainer = memo(({ nots, setNots }: INotificationContainerPro
                             />
                         )
                     case 'load':
-                        return <LoadNotification text={notify.text} />
+                        return <LoadNotification text={notify.text} key={id} />
                 }
             })}
         </div>

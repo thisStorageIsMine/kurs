@@ -29,11 +29,13 @@ export const useHandleLoginChange = () => {
     const bootstrapHelper = useCallback(() => {
         setShowHelper(true)
         clearTimeout(helperTimeoutRef.current)
-        setTimeout(() => setShowHelper(false), 5000)
     }, [])
     const clearHelper = useCallback(() => {
         clearTimeout(helperTimeoutRef.current)
         setShowHelper(false)
+    }, [])
+    const setTimerOnHelper = useCallback(() => {
+        setTimeout(() => setShowHelper(false), 5000)
     }, [])
 
     useEffect(() => {
@@ -55,6 +57,7 @@ export const useHandleLoginChange = () => {
             } else {
                 const isExists = isLoginExists !== undefined ? isLoginExists : true
                 setIsLoginExists(isExists)
+                setTimerOnHelper()
             }
         }
 

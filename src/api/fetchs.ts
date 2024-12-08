@@ -1,3 +1,6 @@
+import { getTokens } from '../helpers'
+import { NotesMapper } from '../helpers/noteMapper'
+import { TDatabaseNote } from '../types'
 import { API } from './endpoints'
 
 export type TUser = {
@@ -18,7 +21,7 @@ export type TAuthnResponse = {
     login: string
     id: number
     role: 'user' | 'admin'
-    token: {
+    tokens: {
         accessJwt: string
         refreshJwt: string
     }
@@ -67,4 +70,29 @@ export const fetchIsLoginExists = async (login: string) => {
 
     const isLoginExists = await response.json()
     return isLoginExists as TLoginExists
+}
+
+export const fethcNotesFromDeepkit = async (userId: number) => {
+    const { access, refresh } = getTokens()
+    if (!access || !refresh) {
+        return
+    }
+
+    const response = await fetch(`${API.getNotes}?user_id=${userId}`, {
+        method: 'POST',
+        headers: [['Content-type', 'application/json']],
+        body: JSON.stringify({
+            tokens: {
+                access: access[1],
+                refresh: refresh[1],
+            },
+        }),
+    })
+
+    if (response.status < 200 || response.status >= 400) {
+        throw new Error(`${response.status} server response`)
+    }
+
+    const notes: TDatabaseNote[] = await response.json()
+    return notes.map(NotesMapper.getClientNote)
 }

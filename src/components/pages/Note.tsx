@@ -14,7 +14,6 @@ export const Note = () => {
         ?.find((n) => n.id === noteId)
 
     const { handleEdit, mutation } = useHandleNoteEdit(note?.id)
-
     if (!note) {
         throw new Error(`There is no ${noteId} note`)
     }
