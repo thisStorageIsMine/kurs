@@ -1,23 +1,33 @@
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import { fethcNotesFromDeepkit } from '../../api/fetchs'
+import { fetchNotes } from '../../helpers'
+import { useUser } from '../../store'
+import { useDeleteNotification, useLoadNotification } from '../../components'
 
 export const useNavigateToNotes = () => {
     const navigate = useNavigate()
-    const { mutateAsync: fetchNotes } = useMutation({
-        mutationFn: async (userId: number) => {
-            return await fethcNotesFromDeepkit(userId)
+    const showNotify = useLoadNotification()
+    const deleteNotify = useDeleteNotification()
+    const setIsAuth = useUser((state) => state.setAuth)
+    const { mutateAsync: getNotes } = useMutation({
+        mutationFn: async () => {
+            return await fetchNotes()
         },
     })
 
     return async (userId: number) => {
-        const notes = await fetchNotes(userId)
+        showNotify('Загружаем ваши заметки', 'load')
+        const notes = await getNotes()
+        let dst: string
+        setIsAuth(true)
 
         if (notes.length === 0) {
-            navigate(`/${userId}/`)
-            return
+            dst = `/${userId}/`
+        } else {
+            dst = `/${userId}/${notes[0].id}`
         }
 
-        navigate(`/${userId}/${notes[0].id}`)
+        deleteNotify('load')
+        navigate(dst)
     }
 }

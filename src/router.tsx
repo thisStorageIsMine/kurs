@@ -1,37 +1,42 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { Login, Notes, SignUp } from './components/pages'
-import { Loader, Note, Protected } from './components'
+import { Note, Protected, notesLoader } from './components'
+import { JWTWrapper } from './components/JWTWrapper'
+import { Empty } from './components/pages/Empty'
 
 const router = createBrowserRouter([
     {
-        path: '/:userId',
-        element: (
-            <Protected>
-                <Notes />
-            </Protected>
-        ),
+        path: '/',
+        element: <JWTWrapper />,
         children: [
             {
-                index: true,
-                element: <h2>Индекс</h2>,
+                path: '/:userId',
+                element: (
+                    <Protected>
+                        <Notes />
+                    </Protected>
+                ),
+                loader: notesLoader,
+                children: [
+                    {
+                        index: true,
+                        element: <Empty />,
+                    },
+                    {
+                        path: ':noteId',
+                        element: <Note />,
+                    },
+                ],
             },
             {
-                path: ':noteId',
-                element: <Note />,
+                path: '/',
+                element: <Login />,
+            },
+            {
+                path: '/signup',
+                element: <SignUp />,
             },
         ],
-    },
-    {
-        path: '/',
-        element: <Login />,
-    },
-    {
-        path: '/signup',
-        element: <SignUp />,
-    },
-    {
-        path: '/loader',
-        element: <Loader />,
     },
 ])
 

@@ -7,7 +7,8 @@ export class SupabaseMapper {
             id: note.id,
             name: note.name,
             payload: note.payload,
-            lastEdit: note.last_edit,
+            createdAt: note.created_at,
+            userId: note.user_id,
         }
     }
 
@@ -16,7 +17,6 @@ export class SupabaseMapper {
             name: note.name,
             payload: note.payload,
             created_at: new Date().toISOString(),
-            last_edit: note.lastEdit,
             user_id: note.userId,
         }
     }

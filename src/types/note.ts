@@ -1,10 +1,9 @@
 export type TNote = {
-    id: number
-    userId: number
-    name: string
-    payload: string
     createdAt: string
-    lastEdit: string
+    id: number
+    name: string | null
+    payload: string | null
+    userId: number
 }
 
 export type TDatabaseNote = {

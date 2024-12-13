@@ -1,5 +1,9 @@
 import { useMutation } from '@tanstack/react-query'
-import { useErrorNotification } from '../components'
+import {
+    useDeleteNotification,
+    useErrorNotification,
+    useLoadNotification,
+} from '../components'
 import { TAuthnResponse, TUser, fetchAuth } from '../api/fetchs'
 import { FormEventHandler, useCallback } from 'react'
 import { asyncWrap, setTokens } from '../helpers'
@@ -10,6 +14,8 @@ import { useNavigateToNotes } from '.'
 export const useHandleSignup = (candidate: TUser) => {
     const createErrorNotify = useErrorNotification()
     const navigateToNotes = useNavigateToNotes()
+    const loadNotify = useLoadNotification()
+    const deleteNotify = useDeleteNotification()
 
     const [setUser, setAuth] = useUser(
         useShallow((state) => [state.setUser, state.setAuth])
@@ -17,7 +23,9 @@ export const useHandleSignup = (candidate: TUser) => {
     const { mutateAsync: fetchSignup } = useMutation({
         mutationKey: ['signup'],
         mutationFn: async (candidate: TUser): Promise<TAuthnResponse> => {
+            loadNotify('Создаём аккаунт...', 'signup')
             const data = await fetchAuth(candidate, 'signup')
+
             return data
         },
     })
@@ -29,6 +37,7 @@ export const useHandleSignup = (candidate: TUser) => {
             const [user, error] = await asyncWrap(fetchSignup(candidate))
             if (error !== null) {
                 console.error(error)
+                deleteNotify('signup')
                 createErrorNotify(
                     'Не удалось зарегистрироваться',
                     'Пожалуйста, попробуйте ещё раз',
@@ -42,6 +51,7 @@ export const useHandleSignup = (candidate: TUser) => {
             setAuth(true)
             setUser(user.login, user.id)
             navigateToNotes(user.id)
+            deleteNotify('signup')
         },
         [candidate, setAuth, setUser, navigateToNotes, fetchSignup]
     )

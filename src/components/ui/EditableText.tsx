@@ -8,7 +8,7 @@ import {
 import cn from 'classnames'
 
 export interface EditableTextProps {
-    text: string
+    text: string | null
     as: string
     placeholder: string
     className?: string
@@ -48,7 +48,7 @@ export const EditableText = ({
     return (
         <span
             className={cn(
-                'flex hover:outline-slate-700  p-2 rounded text-inherit cursor-text',
+                'flex hover:outline-slate-700  p-2 pl-0 rounded text-inherit cursor-text',
                 isEditing ? 'w-full' : 'w-fit',
                 editorClassName
             )}
@@ -63,7 +63,7 @@ export const EditableText = ({
                 placeholder={placeholder}
                 onBlur={() => setIsEditing(false)}
                 ref={setEditorRef}
-                value={content}
+                value={content ?? ''}
             />
 
             {isEditing ? <></> : elem}

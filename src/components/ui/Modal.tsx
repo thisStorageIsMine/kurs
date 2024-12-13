@@ -15,7 +15,7 @@ export const Modal = memo(
                 <>
                     {createPortal(
                         <dialog
-                            className="max-w-[480px] px-10 pt-10 py-5 shadow rounded-2xl   backdrop:bg-black backdrop:bg-opacity-80"
+                            className="max-w-[560px] px-10 pt-10 py-5 shadow rounded-2xl   backdrop:bg-black backdrop:bg-opacity-80 focus:outline-none focus-visible:outline-none"
                             ref={outerRef}
                         >
                             <div className="flex flex-col gap-10">
@@ -25,7 +25,7 @@ export const Modal = memo(
                                         {cancelText}
                                     </button>
                                     <button
-                                        className="grow bg-purple text-black"
+                                        className="grow bg-purple text-white hover:border-white"
                                         onClick={onAccept}
                                     >
                                         {acceptText}

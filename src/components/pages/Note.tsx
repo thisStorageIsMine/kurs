@@ -1,40 +1,44 @@
 import { useParams } from 'react-router-dom'
 import { Editor } from '..'
-import { useDeleteNote, useHandleNoteEdit, useNotesQueryOptions } from '../../hooks'
-import { queryClient } from '../../App'
+import { useDeleteNote, useHandleNoteEdit } from '../../hooks'
+import { useNotes } from '../../store'
 
 export const Note = () => {
     const { noteId: stringNoteId } = useParams()
     const noteId = Number(stringNoteId)
-    const notesQueryOptions = useNotesQueryOptions()
     const deleteNote = useDeleteNote()
 
-    const note = queryClient
-        .getQueryData(notesQueryOptions().queryKey)
-        ?.find((n) => n.id === noteId)
-
-    const { handleEdit, mutation } = useHandleNoteEdit(note?.id)
+    const notes = useNotes((state) => state.notes)
+    const note = notes.find((n) => n.id === noteId)
+    const { handleEdit } = useHandleNoteEdit(note?.id)
     if (!note) {
+        return
         throw new Error(`There is no ${noteId} note`)
     }
 
-    const optimisticHeader = mutation.variables?.name || note.name
-    const optimisticPayload = mutation.variables?.payload || note.payload
+    const optimisticHeader = note.name
+    const optimisticPayload = note.payload
 
     const handleNameEdit = (name: string) => {
-        handleEdit({
-            name,
-            payload: note.payload,
-            lastEdit: new Date().toISOString(),
-        })
+        handleEdit(
+            {
+                name,
+                payload: note.payload,
+                id: note.id,
+            },
+            note.id
+        )
     }
 
-    const handlePayloadEdit = (payload: string) => {
-        handleEdit({
-            payload,
-            name: note.name,
-            lastEdit: new Date().toISOString(),
-        })
+    const handlePayloadEdit = async (payload: string) => {
+        handleEdit(
+            {
+                payload,
+                name: note.name,
+                id: note.id,
+            },
+            note.id
+        )
     }
 
     return (

@@ -1,11 +1,10 @@
-// import { TNote } from '../types'
+import { TNote } from '../types'
 
-// export type TTempNote = Omit<TNote, 'id'>
+export type TUseTempNote = {
+    notes: TNote[]
+}
 
-// export type TUseTempNote = {
-//     tempNote: TNote | null
-// }
-
-// export type TUseTempNoteActions = {
-//     setTempNote: (tempNote: TNote | null) => void
-// }
+export type TUseTempNoteActions = {
+    addNote: (note: TNote) => void
+    setNotes: (notes: TNote[]) => void
+}

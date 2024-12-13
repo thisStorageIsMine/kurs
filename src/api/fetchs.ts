@@ -1,5 +1,6 @@
 import { getTokens } from '../helpers'
 import { NotesMapper } from '../helpers/noteMapper'
+import { supabase } from '../supabase'
 import { TDatabaseNote } from '../types'
 import { API } from './endpoints'
 
@@ -25,6 +26,31 @@ export type TAuthnResponse = {
         accessJwt: string
         refreshJwt: string
     }
+}
+
+export type TReq = {
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE'
+    body?: Record<string, unknown> | string | number | boolean
+    headers?: Record<string, string>
+    endpoint: string
+    param?: Record<string, string>
+}
+
+export const req = async ({ method, body, headers, endpoint, param = {} }: TReq) => {
+    const sershParams = new URLSearchParams(param)
+
+    const url = `${endpoint}?${sershParams.toString()}`
+    const response = await fetch(url, {
+        method,
+        headers: { 'Content-type': 'application/json', ...headers },
+        body: JSON.stringify(body),
+    })
+
+    if (response.status < 200 || response.status >= 400) {
+        throw new Error(`${response.status} server Response`)
+    }
+
+    return await response.json()
 }
 
 export const fetchAuth = async (candidate: TUser, type: 'login' | 'signup') => {
@@ -75,7 +101,7 @@ export const fetchIsLoginExists = async (login: string) => {
 export const fethcNotesFromDeepkit = async (userId: number) => {
     const { access, refresh } = getTokens()
     if (!access || !refresh) {
-        return
+        throw new Error('expired tokens')
     }
 
     const response = await fetch(`${API.getNotes}?user_id=${userId}`, {
@@ -83,8 +109,8 @@ export const fethcNotesFromDeepkit = async (userId: number) => {
         headers: [['Content-type', 'application/json']],
         body: JSON.stringify({
             tokens: {
-                access: access[1],
-                refresh: refresh[1],
+                access: access,
+                refresh: refresh,
             },
         }),
     })
@@ -95,4 +121,44 @@ export const fethcNotesFromDeepkit = async (userId: number) => {
 
     const notes: TDatabaseNote[] = await response.json()
     return notes.map(NotesMapper.getClientNote)
+}
+
+export const insertNote = async ({
+    name,
+    payload,
+    noteId,
+}: {
+    name: string | null
+    payload: string | null
+    noteId: number
+}) => {
+    const { data, error } = await supabase
+        .from('notes')
+        .update({ name: name, payload: payload })
+        .eq('id', noteId)
+        .select()
+
+    if (error) {
+        throw new Error('Failed to insert note')
+    }
+
+    return data[0]
+}
+
+export const fetchLoginViaToken = async (token: string) => {
+    const response = await fetch(`${API.loginViaToken}?refresh=${token}`)
+
+    if (response.status < 200 || response.status >= 400) {
+        throw new Error(`${response.status} server error`)
+    }
+
+    const newTokens = (await response.json()) as TTokenLoginPayload
+    return newTokens
+}
+
+export type TTokenLoginPayload = {
+    tokens: {
+        accessJwt: string
+        refreshJwt: string
+    }
 }

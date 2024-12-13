@@ -1,42 +1,37 @@
 import { useMutation } from '@tanstack/react-query'
-import { supabase } from '../../supabase'
 import { SupabaseMapper } from '../../supabase/mapper'
-import { useUser } from '../../store'
-import { queryClient } from '../../App'
-import { useNotesQueryOptions } from '.'
-import { useMemo } from 'react'
-import { TNote } from '../../types'
 import { useNavigate } from 'react-router-dom'
 import {
     useDeleteNotification,
     useErrorNotification,
     useLoadNotification,
 } from '../../components'
+import { getUserId } from '../../helpers/getUserId'
+import { supabase } from '../../supabase'
+import { useInvalidate } from '../useInvalidate'
 
 export const useInsertNote = () => {
-    const userId = useUser((state) => state.user?.id)
     const navigate = useNavigate()
-
-    const queryOptions = useNotesQueryOptions()
-    const queryKey = useMemo(() => queryOptions().queryKey, [queryOptions])
+    const userId = getUserId()
+    const invalidate = useInvalidate()
 
     const createErrorNotification = useErrorNotification()
     const createLoadNotification = useLoadNotification()
     const deleteNotification = useDeleteNotification()
 
-    const mutation = useMutation({
+    const { mutateAsync: fetchInsertNote } = useMutation({
         mutationKey: ['note', 'insert'],
-        mutationFn: async (note: Omit<TNote, 'id'>) => {
-            console.log('start')
+        mutationFn: async (note: { name: string; payload: string }) => {
             const mappedNote = SupabaseMapper.getBackendNote({
                 ...note,
-                userId: userId || -1,
+                userId: Number(userId),
+                createdAt: new Date().toISOString(),
             })
 
             const { data, error } = await supabase
                 .from('notes')
                 .insert(mappedNote)
-                .select('id, name, payload, user_id, created_at, last_edit')
+                .select('id, name, payload, user_id, created_at')
 
             if (error) {
                 throw new Error('Failed to create new note')
@@ -50,10 +45,7 @@ export const useInsertNote = () => {
         async onSuccess(data) {
             deleteNotification('create')
 
-            await queryClient.invalidateQueries({
-                queryKey,
-                refetchType: 'all',
-            })
+            await invalidate()
             navigate(`/${userId}/${data[0].id}`, {})
         },
         onError() {
@@ -67,5 +59,5 @@ export const useInsertNote = () => {
         },
     })
 
-    return mutation
+    return fetchInsertNote
 }

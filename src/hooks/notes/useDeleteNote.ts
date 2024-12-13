@@ -6,17 +6,20 @@ import {
     useLoadNotification,
 } from '../../components'
 import { useNotesQueryOptions } from '.'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useMemo } from 'react'
-import { useUser } from '../../store'
+import { getUser } from '../../helpers'
+import { useInvalidate } from '../useInvalidate'
 
 export const useDeleteNote = () => {
     const createErrorNotification = useErrorNotification()
     const queryClient = useQueryClient()
     const noteQueryOptions = useNotesQueryOptions()
     const navigate = useNavigate()
+    const location = useLocation()
 
-    const userId = useUser((state) => state.user?.id)
+    const user = getUser()
+    const invalidate = useInvalidate()
 
     const queryKey = useMemo(() => noteQueryOptions().queryKey, [noteQueryOptions])
 
@@ -48,18 +51,19 @@ export const useDeleteNote = () => {
         },
         onSuccess: async () => {
             deleteNotification('delete')
-            if (!userId) return
-
-            await queryClient.invalidateQueries({
-                queryKey,
-                refetchType: 'all',
-            })
-
+            if (!user?.id) return
+            const pathOnStart = location.pathname
+            await invalidate()
             const availableNotes = queryClient.getQueryData(queryKey)
 
             const nextNote =
                 availableNotes && availableNotes.length > 0 ? availableNotes[0].id : ''
-            navigate(`/${userId}/${nextNote}`)
+
+            const pathOnEnd = location.pathname
+
+            if (pathOnEnd === pathOnStart) {
+                navigate(`/${user.id}/${nextNote}`)
+            }
         },
     })
 

@@ -1,7 +1,7 @@
-import { TDatabaseNote, TNote } from '../types'
+import { TDatabaseNote } from '../types'
 
 export class NotesMapper {
-    public static getClientNote(note: TDatabaseNote): TNote {
+    public static getClientNote(note: TDatabaseNote) {
         return {
             id: note.id,
             createdAt: note.created_at,

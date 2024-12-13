@@ -1,4 +1,4 @@
-const host = 'http://0.0.0.0:8080'
+const host = 'http://51.250.112.16'
 
 export const API = {
     login: host + '/auth/login',
@@ -8,4 +8,5 @@ export const API = {
     getNotes: host + '/note/get',
     deleteNote: host + '/note/delete',
     insertNote: host + '/note/add',
+    loginViaToken: host + '/auth/token',
 }

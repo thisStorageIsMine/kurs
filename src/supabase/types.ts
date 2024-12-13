@@ -28,39 +28,28 @@ export type Database = {
           id?: number
           text?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "comments_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       notes: {
         Row: {
           created_at: string
           id: number
-          last_edit: string
-          name: string
-          payload: string
+          name: string | null
+          payload: string | null
           user_id: number
         }
         Insert: {
           created_at?: string
           id?: number
-          last_edit: string
-          name: string
-          payload: string
+          name?: string | null
+          payload?: string | null
           user_id: number
         }
         Update: {
           created_at?: string
           id?: number
-          last_edit?: string
-          name?: string
-          payload?: string
+          name?: string | null
+          payload?: string | null
           user_id?: number
         }
         Relationships: [
@@ -75,17 +64,23 @@ export type Database = {
       }
       users: {
         Row: {
+          created_at: string
           id: number
+          key: number | null
           login: string
           password: string
         }
         Insert: {
+          created_at?: string
           id?: number
+          key?: number | null
           login: string
           password: string
         }
         Update: {
+          created_at?: string
           id?: number
+          key?: number | null
           login?: string
           password?: string
         }

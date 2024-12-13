@@ -1,13 +1,17 @@
 import { ReactNode } from 'react'
-
+import cn from 'classnames'
 interface IAddNoteBtn {
     onClick?: () => void
     children: ReactNode
+    className?: string
 }
-export const AddNoteBtn = ({ children, onClick }: IAddNoteBtn) => {
+export const AddNoteBtn = ({ children, onClick, className }: IAddNoteBtn) => {
     return (
         <div
-            className="flex h-20 items-center gap-4 cursor-pointer hover:bg-white/[20%] p-3"
+            className={cn(
+                'flex h-20 items-center gap-4 cursor-pointer hover:bg-white/[20%] p-3',
+                className
+            )}
             onClick={onClick}
         >
             <div>

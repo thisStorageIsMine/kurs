@@ -7,8 +7,11 @@ export interface INoteProps extends TNote {
     href: string
     className?: string
 }
-export const NoteLink = ({ name, payload, lastEdit, href, className }: INoteProps) => {
-    const date = useMemo(() => new Date(lastEdit).toLocaleDateString('ru-RU'), [lastEdit])
+export const NoteLink = ({ name, payload, href, className, createdAt }: INoteProps) => {
+    const date = useMemo(
+        () => new Date(createdAt).toLocaleDateString('ru-RU'),
+        [createdAt]
+    )
 
     return (
         <NavLink
