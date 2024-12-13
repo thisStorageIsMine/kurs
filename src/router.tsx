@@ -38,6 +38,8 @@ const router = createBrowserRouter([
             },
         ],
     },
-])
+], {
+    basename: '/kurs'
+})
 
 export { router }
