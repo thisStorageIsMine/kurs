@@ -1,4 +1,4 @@
-const host = 'http://51.250.112.16'
+const host = 'http://51.250.112.93'
 
 export const API = {
     login: host + '/auth/login',
